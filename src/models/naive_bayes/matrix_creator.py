@@ -18,13 +18,11 @@ class Matrix_Creator():
 
     def read_data_set(self, fname = None):
         if not fname:return []
-        lines = map(lambda x:x.strip(), open(fname).readlines()[:])
+        lines = list(map(lambda x:x.strip(), open(fname).readlines()[:]))
         return lines 
-        
 
     def create_data_dict(self, data_list):
         tmp_dict = {} 
-        
         for each in data_list:
            sentence, category = each.split("\t")   
            if not tmp_dict.get(category, []):
@@ -48,18 +46,14 @@ class Matrix_Creator():
                word = word.replace(",", "")
                if (word.strip() and word.strip() not in self.stop_words) and len(word) >2: 
                    words.append(word)
-            
             for each_word in words:
                if not clas_word_frequency[category].get(each_word, 0):
                    clas_word_frequency[category][each_word] = 0
                clas_word_frequency[category][each_word] += 1
-               
         V = []
         for k,  v in clas_word_frequency.items():
-            V = V + clas_word_frequency[k].keys()[:]    
-              
+            V = V + list(clas_word_frequency[k].keys())[:]    
         return clas_word_frequency, V  
-   
   
     def process_basic(self, fname):
         data_list   =  self.read_data_set(fname)
@@ -69,12 +63,8 @@ class Matrix_Creator():
         prob_matrix = {}
         for category, sentence_list in p_class_dict.items():
            prob_matrix[category] =  math.log10(float(len(sentence_list)) /total_docs) 
-            
         return total_docs, clas_word_frequency, prob_matrix , V   
-         
 
 if __name__ == '__main__':       
-
-
     obj = Matrix_Creator()
     obj.process_basic("../input_data/sentiment_labelled_sentences/imdb_labelled.txt") 
